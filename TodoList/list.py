@@ -1,13 +1,18 @@
 import pickle
+from datetime import datetime
 
 class Task():
     
     def __init__(self, desc, prio):
         self.desc = desc
         self.prio = prio
+        self.date = datetime.now()
         
     def __str__(self):
-        return f'{self.desc}'
+        delta = datetime.now() - self.date
+        date = self.date.strftime("%d/%m/%Y")
+        
+        return f'{self.desc} - created {date}, {delta.days} days ago'
 
 
 def prio_sort(task):
