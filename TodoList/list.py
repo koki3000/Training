@@ -1,3 +1,5 @@
+import pickle
+
 class Task():
     
     def __init__(self, desc, prio):
@@ -13,8 +15,20 @@ def prio_sort(task):
 
 
 class ToDoList:
-    list = []
-    def __init__(self, list):
+    
+    def __init__(self, file):
+        self.file = file
+        
+        try:
+            with open(self.file, 'rb') as file:
+                list = pickle.load(file)
+        except:
+            test1 = Task('first', 100)
+            test2 = Task('second', 50)
+            test3 = Task('most important', 500)
+            test_list = [test1, test2, test3]
+            list = test_list
+        
         self.list = list
     
     def append_task(self, desc, prio):        
@@ -30,17 +44,22 @@ class ToDoList:
         self.list.sort(reverse=True, key=prio_sort)
         delete = input('Which task do you want to delete: ')
         del self.list[int(delete)-1]
-
+    
     def show_list(self):
         self.list.sort(reverse=True, key=prio_sort)
         cnt = 1
         print('\nTasks:')
-        for task in self.list:
-            print(f'{cnt} - {task}')
-            cnt += 1
+        for index, task in enumerate(self.list):
+            print(f'{index+1} - {task}')
+            
+    def save(self):
+        with open(self.file, 'wb') as file:
+            pickle.dump(self.list, file)
         
 if __name__ == '__main__':
     
+    file_path = 'todo_list.pickle'
+    list = ToDoList(file_path)
     menu = """
 Menu:
 1 - add task
@@ -50,11 +69,6 @@ Menu:
 Please select option: """
     
     option = ''
-    test1 = Task('pierwsze', 100)
-    test2 = Task('drugie', 50)
-    test3 = Task('najwazniejsze', 500)
-    test_list = [test1, test2, test3]
-    list = ToDoList(test_list)
 
     while option != '0':
         
@@ -66,3 +80,6 @@ Please select option: """
             list.delete_task()
         elif option == '3':
             list.show_list()
+        elif option == '0':
+            list.save()
+    
